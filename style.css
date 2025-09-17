@@ -1,0 +1,104 @@
+body {
+  background: #f9fafb; 
+  color: #333;
+  transition: all 0.3s;
+}
+
+h2 { font-weight: 700; }
+
+.card { border-radius: 1rem; }
+
+/* Summary Cards spacing */
+#summary .card { margin-bottom: 1rem; }
+
+body.dark-mode {
+  background: #121212;
+  color: #f0f0f0;
+}
+.card.dark-mode {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+.table-dark {
+  background-color: #2c2c2c;
+}
+
+/* Chart card - Line Chart */
+.chart-card-1 {
+  height: 6cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding-bottom: 1cm;
+}
+.chart-card-1 canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Chart card - Pie Chart */
+.chart-pie-container {
+  height: 10cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.chart-pie-container h5 {
+  align-self: flex-start;
+  margin-left: 1rem;
+}
+
+/* 🔹 Bar Chart Section */
+.bar-chart-card {
+  height: 8cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.bar-chart-card canvas {
+  max-height: 6cm;
+}
+
+/* Fixed-height Transactions card */
+#transactionsTable {
+  margin-bottom: 0;
+}
+.transactions-wrapper {
+  max-height: 700px;   /* Adjust height as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* Keep table header fixed */
+.transactions-wrapper table thead th {
+  position: sticky;
+  top: 0;
+  background: #212529; /* matches .table-dark */
+  z-index: 2;
+}
+
+/* Net Income Bar Chart */
+.net-bar-card {
+  height: 7cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.net-bar-card canvas {
+  max-height: 6.5cm; /* slightly smaller than container */
+}
+
+.card.sample-csv-card {
+  height: 3cm;              /* fixed height */
+  padding: 0.3rem 0.8rem;   /* compact padding */
+  font-size: 0.85rem;       /* smaller font */
+  overflow: hidden;         /* prevent overflow */
+}
+
+.card.sample-csv-card .card-text {
+  margin-bottom: 0.15rem;
+  line-height: 1.1;
+}
