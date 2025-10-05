@@ -99,7 +99,7 @@ function renderData(data) {
   }
 }
 
-// Line + Pie charts
+// Line + Pie charts (✅ includes total update feature)
 function drawCharts(monthly, categories) {
   const months = Object.keys(monthly).sort();
   const incomeData = months.map(m => monthly[m].income);
@@ -118,15 +118,87 @@ function drawCharts(monthly, categories) {
         { label: 'Spend', data: spendData, borderColor: 'red', fill: false, tension: 0.4 }
       ]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, layout: { padding: { bottom: 20 } } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      layout: { padding: { bottom: 20 } }
+    }
   });
 
+  // ----- PIE CHART -----
   const ctx2 = document.getElementById("pieChart").getContext("2d");
-  pieChart = new Chart(ctx2, {
+  const pieData = {
+    labels: Object.keys(categories),
+    datasets: [
+      {
+        data: Object.values(categories),
+        backgroundColor: ['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#c9cbcf']
+      }
+    ]
+  };
+
+  // 🔹 Create total label element (top-right)
+  let totalLabel = document.getElementById("pieTotalLabel");
+  if (!totalLabel) {
+    totalLabel = document.createElement("div");
+    totalLabel.id = "pieTotalLabel";
+    totalLabel.style.position = "absolute";
+    totalLabel.style.top = "10px";
+    totalLabel.style.right = "15px";
+    totalLabel.style.fontWeight = "600";
+    totalLabel.style.padding = "6px 12px";
+    totalLabel.style.borderRadius = "8px";
+    totalLabel.style.background = "rgba(240, 240, 240, 0.9)";
+    totalLabel.style.boxShadow = "0 1px 4px rgba(0,0,0,0.2)";
+    totalLabel.style.fontSize = "0.9rem";
+    totalLabel.style.color = "#222";
+    const container = ctx2.canvas.closest(".chart-pie-container");
+    container.style.position = "relative";
+    container.appendChild(totalLabel);
+  }
+
+  const pieConfig = {
     type: 'pie',
-    data: { labels: Object.keys(categories), datasets: [{ data: Object.values(categories), backgroundColor: ['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#c9cbcf'] }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+    data: pieData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          onClick: function(e, legendItem, legend) {
+            const index = legendItem.index;
+            const ci = legend.chart;
+            ci.toggleDataVisibility(index);
+            ci.update();
+            updatePieTotal(ci);
+          }
+        }
+      }
+    },
+    plugins: [{
+      id: 'updateTotalOnInit',
+      afterInit: (chart) => updatePieTotal(chart),
+      afterUpdate: (chart) => updatePieTotal(chart)
+    }]
+  };
+
+  pieChart = new Chart(ctx2, pieConfig);
+}
+
+// 🔹 Helper to update visible total
+function updatePieTotal(chart) {
+  const dataset = chart.data.datasets[0];
+  let total = 0;
+  dataset.data.forEach((v, i) => {
+    if (!chart.getDataVisibility(i)) return;
+    total += v;
   });
+  const totalLabel = document.getElementById("pieTotalLabel");
+  if (totalLabel) {
+    totalLabel.textContent = `Total: ₹${total.toFixed(2)}`;
+  }
 }
 
 // 🔹 Bar Chart (Weekly / Monthly)
