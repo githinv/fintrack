@@ -345,3 +345,26 @@ function drawNetBarChart(data){
     options:{ responsive:true, maintainAspectRatio:false, layout:{ padding:{ bottom:20 } } }
   });
 }
+
+// 🔹 Toggle visibility of Credit and Balance columns
+// Keep track of column visibility
+const columnVisibility = { Credit: true, Balance: true };
+
+// Generic toggle function for Credit or Balance column
+function toggleColumn(columnName) {
+  columnVisibility[columnName] = !columnVisibility[columnName];
+  const table = document.getElementById("transactionsTable");
+  if (!table) return;
+
+  // Get column index by header name
+  const headers = table.querySelectorAll("thead th");
+  let colIndex = -1;
+  headers.forEach((th, i) => { if (th.textContent.trim() === columnName) colIndex = i; });
+
+  if (colIndex === -1) return;
+
+  table.querySelectorAll("tr").forEach(row => {
+    const cell = row.querySelectorAll("td, th")[colIndex];
+    if (cell) cell.style.display = columnVisibility[columnName] ? "" : "none";
+  });
+}

@@ -102,3 +102,22 @@ body.dark-mode {
   margin-bottom: 0.15rem;
   line-height: 1.1;
 }
+
+#transactionsTable td, 
+#transactionsTable th {
+  transition: all 0.2s ease;
+}
+
+/* Transactions card header: align label left and toggle buttons right */
+.transactions-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Small spacing for toggle buttons */
+.transactions-toggle-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
