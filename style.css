@@ -105,7 +105,16 @@ body.dark-mode {
 
 #transactionsTable td, 
 #transactionsTable th {
-  transition: all 0.2s ease;
+  font-size: 0.85rem;       /* smaller font for content */
+  padding: 0.3rem 0.5rem;   /* reduce padding */
+  white-space: nowrap;       /* prevent line breaks */
+  text-overflow: ellipsis;   /* truncate overflow text */
+  overflow: hidden;          /* hide overflow */
+}
+
+#transactionsTable thead th {
+  font-size: 1rem; /* Adjust this value */
+  font-weight: bold; /* Optional: makes headers stand out */
 }
 
 /* Transactions card header: align label left and toggle buttons right */
@@ -120,4 +129,52 @@ body.dark-mode {
 .transactions-toggle-buttons {
   display: flex;
   gap: 0.25rem;
+}
+
+/* 🔹 Credit Bar Chart - fixed height like Category Spend */
+.credit-bar-card {
+  height: 8cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.credit-bar-card canvas {
+  max-height: 6cm; /* same as Category Spend */
+}
+
+.fintrack-footer {
+  font-size: 0.8rem;        /* small text */
+  color: #333;              /* text color */
+  text-align: center;
+  padding: 0.5rem 0;
+  background-color: #d3d3d3; /* light gray background */
+  border-top: 1px solid #bbb; /* subtle border */
+  position: relative;       /* use fixed if you want it always visible */
+  width: 100%;
+  bottom: 0;
+}
+
+body.dark-mode .fintrack-footer {
+  background-color: #333;   /* dark gray in dark mode */
+  color: #ccc;              /* light text */
+  border-top: 1px solid #555;
+}
+
+/* Small total box next to dropdowns */
+.total-box {
+  font-size: 1rem;            /* Increase font size */
+  font-weight: 700;           /* Make it bold */
+  padding: 0.5rem 0.8rem;     /* Increase vertical & horizontal padding */
+  border-radius: 0.5rem;
+  background-color: #f0f0f0;
+  color: #333;
+  display: flex;              /* Flexbox to center content */
+  align-items: center;        /* Vertical center */
+  justify-content: center;    /* Horizontal center */
+  white-space: nowrap;
+  border: 1px solid #ccc;
+  min-width: 60px;            /* Optional: keep box a decent width */
+  text-align: center;         /* Fallback for older browsers */
 }

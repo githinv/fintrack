@@ -19,6 +19,7 @@ function loadCSV() {
       renderData(filteredDataForCharts);
       updateBarChart();
       drawNetBarChart(filteredDataForCharts);
+	  updateCreditChartAfterDataChange();
     }
   });
 }
@@ -88,7 +89,7 @@ function renderData(data) {
   const filterDropdown = document.getElementById("categoryFilterBar");
   if (filterDropdown) {
     const currentValue = filterDropdown.value; 
-    filterDropdown.innerHTML = `<option value="all">All Categories</option>`;
+    filterDropdown.innerHTML = `<option value="all">Categories</option>`;
     uniqueCategories.forEach(cat => {
       const option = document.createElement("option");
       option.value = cat;
@@ -242,6 +243,12 @@ function updateBarChart() {
     options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
   });
 
+  // 🔹 Compute total for displayed category
+  const totalSpend = values.reduce((a,b) => a+b, 0);
+  // 🔹 Update total box
+  const totalSpendBox = document.getElementById("totalSpendBox");
+  if(totalSpendBox) totalSpendBox.textContent = `Total: ₹${totalSpend.toFixed(2)}`;
+
   renderTransactions(filteredData);
 }
 
@@ -293,7 +300,8 @@ function filterByDate() {
   filteredDataForCharts = [...filtered];
   renderData(filtered);
   updateBarChart();
-  drawNetBarChart(filtered); 
+  drawNetBarChart(filtered);
+  updateCreditChartAfterDataChange();
 }
 
 function resetFilter() {
@@ -303,6 +311,7 @@ function resetFilter() {
   renderData(allData);
   updateBarChart();
   drawNetBarChart(allData);
+  updateCreditChartAfterDataChange();
 }
 
 // Dark mode toggle
@@ -367,4 +376,104 @@ function toggleColumn(columnName) {
     const cell = row.querySelectorAll("td, th")[colIndex];
     if (cell) cell.style.display = columnVisibility[columnName] ? "" : "none";
   });
+}
+
+let creditBarChart = null;
+
+// 🔹 Update Credit Bar Chart
+function updateCreditBarChart() {
+  const selected = document.getElementById("categoryFilterCredit").value;
+  const view = document.getElementById("timeViewCredit").value;
+
+  const baseData = filteredDataForCharts.length ? filteredDataForCharts : allData;
+
+  // Filter data by category if needed
+  const filteredData = selected === "all"
+    ? baseData
+    : baseData.filter(row => (row["Category"]?.trim() || "Other") === selected);
+
+  const grouped = {};
+  filteredData.forEach(row => {
+    const dateStr = row["Date"]?.trim() || "";
+    const credit = parseFloat(row["Credit"]) || 0;
+    if (!dateStr) return;
+
+    const parts = dateStr.split("-");
+    const year = parts[2], month = parts[1], day = parts[0];
+    const dateObj = new Date(`${year}-${month}-${day}`);
+
+    const key = view === "monthly" ? `${year}-${month}` : `${year}-W${getWeekNumber(dateObj)}`;
+    grouped[key] = (grouped[key] || 0) + credit;
+  });
+
+  const labels = Object.keys(grouped).sort((a,b)=>{
+    if(view==="weekly"){
+      const [yA,wA]=a.split('-W').map(Number); const [yB,wB]=b.split('-W').map(Number);
+      return yA!==yB ? yA-yB : wA-wB;
+    } else return a.localeCompare(b);
+  });
+  const values = labels.map(k=>grouped[k]);
+
+  // Destroy previous chart if exists
+  if(creditBarChart) creditBarChart.destroy();
+
+  const ctx = document.getElementById("creditBarChart").getContext("2d");
+  creditBarChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label: selected==="all"?"Total Credit":`${selected} Credit`,
+        data: values,
+        backgroundColor:'#4bc0c0'
+      }]
+    },
+    options:{ 
+      responsive:true, 
+      maintainAspectRatio:false, 
+      scales:{ y:{ beginAtZero:true } } 
+    }
+  });
+  
+  // 🔹 Compute total for displayed category
+  const totalCredit = values.reduce((a,b) => a+b, 0);
+  // 🔹 Update total box
+  const totalCreditBox = document.getElementById("totalCreditBox");
+  if(totalCreditBox) totalCreditBox.textContent = `Total: ₹${totalCredit.toFixed(2)}`;
+
+  // Populate Category dropdown with Credit categories
+  populateCreditDropdown();
+}
+
+// 🔹 Populate Credit Category dropdown
+function populateCreditDropdown() {
+  const dropdown = document.getElementById("categoryFilterCredit");
+  if (!dropdown) return;
+
+  const currentValue = dropdown.value;
+  const categories = new Set();
+
+  // 🔹 Use filteredDataForCharts to respect global date filter
+  const dataSource = filteredDataForCharts.length ? filteredDataForCharts : allData;
+
+  dataSource.forEach(row => {
+    const credit = parseFloat(row["Credit"]) || 0;
+    if (credit > 0) {
+      categories.add(row["Category"]?.trim() || "Other");
+    }
+  });
+
+  dropdown.innerHTML = `<option value="all">Categories</option>`;
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    if (cat === currentValue) option.selected = true;
+    dropdown.appendChild(option);
+  });
+}
+
+// 🔹 Call this when CSV loads or filters are applied
+function updateCreditChartAfterDataChange() {
+  updateCreditBarChart();
 }

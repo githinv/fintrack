@@ -104,6 +104,24 @@
 	  <canvas id="netBarChart"></canvas>
 	</div>
 
+	<!-- 🔹 New Credit Bar Chart Section -->
+    <div class="card shadow-sm p-3 mb-4 credit-bar-card">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+        <h5 class="mb-2">Credit Details</h5>
+        <div class="d-flex gap-2">
+		  <div id="totalCreditBox" class="total-box">₹0</div>
+          <select id="categoryFilterCredit" class="form-select w-auto" onchange="updateCreditBarChart()">
+            <option value="all">Categories</option>
+          </select>
+          <select id="timeViewCredit" class="form-select w-auto" onchange="updateCreditBarChart()">
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+      </div>
+      <canvas id="creditBarChart"></canvas>
+    </div>
+
     <div class="card shadow-sm p-3 chart-pie-container mb-4">
       <h5>Spending by Category</h5>
       <div class="pie-wrapper">
@@ -114,10 +132,11 @@
     <!-- 🔹 New Bar Chart Section -->
     <div class="card shadow-sm p-3 mb-4 bar-chart-card">
       <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
-        <h5 class="mb-2">Category Spend</h5>
+        <h5 class="mb-2">Spend Details</h5>
         <div class="d-flex gap-2">
+		  <div id="totalSpendBox" class="total-box">₹0</div>
           <select id="categoryFilterBar" class="form-select w-auto" onchange="updateBarChart()">
-            <option value="all">All Categories</option>
+            <option value="all">Categories</option>
           </select>
           <select id="timeView" class="form-select w-auto" onchange="updateBarChart()">
             <option value="monthly">Monthly</option>
@@ -154,6 +173,11 @@
         </table>
       </div>
     </div>
+
+    <!-- 🔹 Footer -->
+    <footer class="fintrack-footer text-center">
+      FinTrack Version-1 &nbsp;@&nbsp; vgithin@gmail.com
+    </footer>
 
   <!-- Custom JS -->
   <script src="script.js"></script>
