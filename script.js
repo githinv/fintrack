@@ -168,6 +168,10 @@ function drawCharts(monthly, categories) {
       plugins: {
         legend: {
           position: 'right',
+		    labels: {
+				boxWidth: 12,   // <-- width of the colored box
+				boxHeight: 12   // <-- optional, for square shape
+			  },
           onClick: function(e, legendItem, legend) {
             const index = legendItem.index;
             const ci = legend.chart;

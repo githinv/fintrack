@@ -44,7 +44,15 @@ body.dark-mode {
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  height: 25rem;             /* fixed container height */
+  width: 81rem;              /* fixed container width */
 }
+
+.chart-pie-container canvas {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 .chart-pie-container h5 {
   align-self: flex-start;
   margin-left: 1rem;
